@@ -18,6 +18,7 @@ function knightMoves([initialX, initialY], [finalX, finalY]) {
         [-2,1],
         [-1,2]
     ]
+
     let queue = []
     let seen = new Set();
     let paths = []
@@ -25,10 +26,13 @@ function knightMoves([initialX, initialY], [finalX, finalY]) {
     seen.add([initialX, initialY])
     while (knight.X !== finalX || knight.Y !== finalY) {
         count += 1;
-        // console.log(knight.X, knight.Y)
+
+        //Explore possible moves
         for (let i=0;i<moves.length;i++){
             let posX = knight.X+moves[i][0]
             let posY = knight.Y+moves[i][1]
+
+            // Helper code to check for visited positions
             let containsMove = false
             for (let arr of seen) {
                 if (arr.toString() === [posX, posY].toString()) {
@@ -36,12 +40,25 @@ function knightMoves([initialX, initialY], [finalX, finalY]) {
                     break;
                 }
             }
-            if (posX >= 0 && posY >= 0 && posX <= 7 && posY <= 7 && !containsMove) {
-                let path = {}
-                path.origin = [knight.X, knight.Y];
-                path.next = [posX, posY]
+            
+            // check if new position is within board and not visited before
+            if (
+                posX >= 0 && 
+                posY >= 0 && 
+                posX <= 7 && 
+                posY <= 7 && 
+                !containsMove
+                ) {
+                let path = {
+                    origin = [knight.X, knight.Y];
+                    next = [posX, posY]
+                }
                 paths.push(path)
+
+                //Mark new position
                 seen.add([posX, posY])
+
+                //Add new position to queue
                 queue.push([posX, posY])
             }
         } 
@@ -52,14 +69,19 @@ function knightMoves([initialX, initialY], [finalX, finalY]) {
 
     }
 
+    //Find the last move taken to get to the objective
     let finalPath;
-    let answer = [];
     for (let path of paths) {
         if (path.next.toString()===`${finalX},${finalY}`) {
             finalPath = path
         }
     }
+
+    // Create an array to store the paths taken
+    let answer = [];
+    // Push last move taken
     answer.push([finalPath.next])
+    // Check moves taken to input the corresponding moves
     while (finalPath.origin.toString() !== `0,0`) {
         for (let path of paths) {
             if (path.next.toString()===finalPath.origin.toString()) {
@@ -71,7 +93,7 @@ function knightMoves([initialX, initialY], [finalX, finalY]) {
         }
         answer.push([finalPath.next])
     }
-    console.log(paths)
+
     answer.push([finalPath.origin])
     answer.reverse()
     console.log(`you took ${answer.length} steps!`)
@@ -79,4 +101,5 @@ function knightMoves([initialX, initialY], [finalX, finalY]) {
     for (let point of answer) {
         console.log(point.toString())
     }
+    console.log(`the longest possible path was: ${count} steps`)
 }
